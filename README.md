@@ -9,3 +9,5 @@ J. Kwisthout (2021). Explainable AI using MAP-independence. Proceedings of the 1
 C. Yuan, T. Lu, and M. J. Druzdzel. Annealed MAP. In D. Chickering and J. Halpern,
 editors, Proceedings of the Twentieth Conference in Uncertainty in Articial Intelligence,
 pages 628{635. AUA, 2004.
+
+Correct compilation requires a compiled libdai library. These are not included here, but libdai.a or libdai32.a can be requested from the author if you cannot build those libraries yourself.
