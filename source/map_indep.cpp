@@ -1,17 +1,19 @@
 /************************************************************************/
 /* MAP Independence algorithm implementation   					        */
 /* Written by:		Johan Kwisthout                                		*/
-/* Version:			0.1 (not finished yet)								*/
-/* Last changed:	04-07-2022                                         	*/
+/* Version:			1.0													*/
+/* Last changed:	04-01-2023                                         	*/
 /*                                                                     	*/
 /* Version History:                                                    	*/
 /*                                                                     	*/
 /* Version Comments:                                                   	*/
 /* - implementation of the algorithm described in Kwisthout (2021)     	*/
+/* - cutoffTime is not yet used in the algorithms						*/
 /************************************************************************/
 
 // headers
 #include "mfesim.h"
+#include "combinations.hpp"		// Howard Hinnant's combinations template
 #include <chrono>
 
 bool weak_map_indep(dai::FactorGraph fg, std::vector<unsigned int> evidenceVars, std::vector<unsigned int> evidenceValues, 
@@ -62,12 +64,20 @@ double weak_map_indep_measure(dai::FactorGraph fg, std::vector<unsigned int> evi
     return ((double) different / (double) count);
 }
 
-// not yet implemented - see Kwisthout (2022)
 std::vector<unsigned long int> max_weak_map_indep(dai::FactorGraph fg, std::vector<unsigned int> evidenceVars, std::vector<unsigned int> evidenceValues, 
     std::vector<unsigned int> hypothesisVars, std::vector<unsigned int> hypothesisValues, std::vector<unsigned int> independenceTestVars, unsigned long int cutoffTime)
 {
-    std::vector<unsigned long int> weak;
+	// we simply test for each of the variables in independenceTestVars whether they are
+	// weakly map independent and if so, we add them to the set 'weak'
 
+	std::vector<unsigned long int> weak;
+
+	for (auto varR = independenceTestVars.begin(); varR != independenceTestVars.end(); ++varR)
+	{
+		std::vector<unsigned int> varVec(1, *varR);
+		if (weak_map_indep(fg, evidenceVars, evidenceValues, hypothesisVars, hypothesisValues, varVec, cutoffTime))
+			weak.push_back(*varR);
+	}
     return weak;
 }
 
@@ -150,11 +160,42 @@ double strong_map_indep_measure(dai::FactorGraph fg, std::vector<unsigned int> e
     return ((double) different / (double) count);
 }
 
-// not yet implemented - see Kwisthout (2022)
 std::vector<unsigned long int> max_strong_map_indep(dai::FactorGraph fg, std::vector<unsigned int> evidenceVars, std::vector<unsigned int> evidenceValues, 
-    std::vector<unsigned int> hypothesisVars, std::vector<unsigned int> hypothesis_values, std::vector<unsigned int> independenceTestVars, unsigned long int cutoffTime)
+    std::vector<unsigned int> hypothesisVars, std::vector<unsigned int> hypothesisValues, std::vector<unsigned int> independenceTestVars, unsigned long int cutoffTime)
 {
+	// This is a very time-consuming algorithm: we iterate over all subsets of independenceTestVars,
+	// run strong_map_indep over this subset, and if it answers 'yes' we keep track of the largest size
+	// we make use of Howard Hinnant's combinations and permutations; in particular, we use the code at
+	// https://stackoverflow.com/questions/25984609/iteratively-calculate-the-power-set-of-a-set-or-vector
+
     std::vector<unsigned long int> strong;
+
+	unsigned int max = 0;
+
+    for (std::size_t k = 0; k <= independenceTestVars.size(); ++k)
+	{
+        for_each_combination(independenceTestVars.begin(), independenceTestVars.begin()+k, independenceTestVars.end(),
+			[&](std::vector<unsigned int>::const_iterator first, std::vector<unsigned int>::const_iterator last)
+        {
+			std::vector<unsigned int> testVars (first, last);
+			DEBUG(std::cout << "Testing set " << testVars << std::endl;)
+
+			if (strong_map_indep(fg, evidenceVars, evidenceValues, hypothesisVars, hypothesisValues,
+				testVars, cutoffTime))
+			{
+				DEBUG(std::cout << "This is now the largest set of size " << k << std::endl;)
+    
+				max = k;
+				strong.clear();
+				std::copy(testVars.begin(), testVars.end(), back_inserter(strong));
+				return true;		// we have a set of size k, so try k+1
+			}
+			else
+			{
+				return false;		// keep iterating combinatons
+			}
+        });	// end of for_each_combination template
+	}
 
     return strong;
 }

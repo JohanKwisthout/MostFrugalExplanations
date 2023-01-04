@@ -10,8 +10,7 @@
 #include <map>
 #include <cstdlib>
 #include <experimental/random>
-
-#include "dai/alldai.h"  // Include main libDAI header file
+#include "dai/alldai.h"  		// Include main libDAI header file
 #include "dai/factorgraph.h"
 #include "dai/jtree.h"
 #include "dai/varset.h"
