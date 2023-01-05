@@ -55,13 +55,13 @@ double weak_map_indep_measure(dai::FactorGraph fg, std::vector<unsigned int> evi
             {
                 DEBUG(std::cout << "Different for R = " << *varR << " and r = " << state << std::endl;)
                 different++;
-                if (decision) return 1.0;
+                if (decision) return 0.0;
             }
             count++;                
         }
     }
-    DEBUG(std::cout << "Quantified weak MAP independence:  " << ((double) different / (double) count) << std::endl;)
-    return ((double) different / (double) count);
+    DEBUG(std::cout << "Quantified weak MAP independence:  " << 1 - ((double) different / (double) count) << std::endl;)
+    return 1.0 - ((double) different / (double) count);
 }
 
 std::vector<unsigned long int> max_weak_map_indep(dai::FactorGraph fg, std::vector<unsigned int> evidenceVars, std::vector<unsigned int> evidenceValues, 
@@ -150,14 +150,14 @@ double strong_map_indep_measure(dai::FactorGraph fg, std::vector<unsigned int> e
             // (best != h*)
             DEBUG(std::cout << "Different for r = " << independenceValues << std::endl;)
             different++;
-            if (decision) return 1.0;
+            if (decision) return 0.0;
         }
       	// next value in iteration
         iterate(nr_vars, -1, independenceValues, independenceMaxValues);
         count++;                
     }	
-    DEBUG(std::cout << "Quantified strong MAP independence:  " << ((double) different / (double) count) << std::endl;)
-    return ((double) different / (double) count);
+    DEBUG(std::cout << "Quantified strong MAP independence:  " << 1 - ((double) different / (double) count) << std::endl;)
+    return 1 - ((double) different / (double) count);
 }
 
 std::vector<unsigned long int> max_strong_map_indep(dai::FactorGraph fg, std::vector<unsigned int> evidenceVars, std::vector<unsigned int> evidenceValues, 
