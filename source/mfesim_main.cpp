@@ -1,11 +1,11 @@
 /************************************************************************/
 /* MFE, MAP independence, and Annealed MAP experimentation code	        */
 /* Written by:		Johan Kwisthout                                		*/
-/* Version:			1.1                             					*/
+/* Version:			1.2                             					*/
 /* Last changed:	01-07-2022                                         	*/
 /*                                                                     	*/
 /* Version History:                                                    	*/
-/* 1.2 (planned) Max Independence (weak and strong)                     */
+/* 1.2 Max Independence (weak and strong)                     		*/
 /* 1.1 This version also implements MAP independence (Kwisthout, 2021)  */
 /* 1.0 This version contains the MFE simulation code as well as an      */
 /*     implementation of Annealed MAP.                                  */
@@ -59,7 +59,7 @@ unsigned long int samplesRel = 10;
 double relThreshold = 0.1;
 
 int versionMajor = 1;
-int versionMinor = 1;
+int versionMinor = 2;
 
 // function prototypes
 int main(int argc, char *argv[]);
