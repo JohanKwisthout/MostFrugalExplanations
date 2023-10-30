@@ -11,3 +11,5 @@ editors, Proceedings of the Twentieth Conference in Uncertainty in Articial Int
 pages 628{635. AUA, 2004.
 
 Correct compilation requires a compiled libdai library. These are not included here, but libdai.a or libdai32.a can be requested from the author if you cannot build those libraries yourself.
+
+Make sure to make directories /object and /release before compiling. Depending on your version of the STL, you may need to change <experimental/random> in <random> to avoid compilation errors (like "'mt19937' is not a member of 'std'").
